@@ -1,0 +1,146 @@
+Unilasalle-RJ - AV2
+Aluno: Andre Alves Garzia
+Prova Av2 de Laboratorio de Sistemas Operacionais
+Professor: Alex Salgado
+1o. Semestre de 2017   Turno: M
+--------------------------------------------------
+1-Faça um script shell que:
+- Pergunte por um nome e crie uma pasta e um arquivo.txt com o mesmo nome inserido.
+
+2-Quantos erros tem no script abaixo? Qual(is) são eles?
+case "$file" in
+    *.txt}
+        echo "É um arquivo de texto."
+        cat "$file"
+
+    *.gif|*.jpg|*.png}
+        echo "É uma figura."
+        xloadimage "$file"
+
+    *}
+        echo "Não sei que arquivo é esse."
+
+esac
+
+3-Usando estrutura de repetição, faça um script para exibir todos os arquivos
+da pasta atual com tamanho maior que 500kb.
+
+4-Usando estrutura de repetição, faça um script para calcular e exibir quantas
+pastas e quantos arquivos tem na pasta atual.
+
+5-Faça um script que leia um numero IP e retorna se endereço responde ou não ao
+comando ping.
+Além disso, se for digitado um ip vazio, o script deve informar ao usuario.
+
+Respostas aqui:
+1-
+#!/bin/sh
+# ---------------------------------------
+# 1-Faça um script shell que:
+# - Pergunte por um nome e crie uma pasta e um arquivo.txt com o mesmo nome inserido.
+# ---------------------------------------
+echo -n "Qual seu nome ? "
+read seunome
+mkdir $seunome
+cd $seunome
+echo "$seunome" >> $seunome.txt
+
+# ---------------------------------------
+
+2-
+
+O script contém 7 error sendo eles:
+1x Falta inicializar $file com os arquivos.
+3x O item do caso termina com ")" e não com }
+3x Cada caso deve ser finalizado com ;;
+
+O script correto é:
+
+#!/bin/bash
+# ---------------------------------------
+# 2-Quantos erros tem no script abaixo? Qual(is) são eles?
+# ---------------------------------------
+#
+for file in *.*
+do
+  case "$file" in
+      *.txt)
+          echo "É um arquivo de texto."
+          cat "$file"
+      ;;
+      *.gif|*.jpg|*.png)
+          echo "É uma figura."
+          xloadimage "$file"
+      ;;
+      *)
+          echo "$file: Não sei que arquivo é esse."
+      ;;
+  esac
+done
+# ---------------------------------------
+
+
+3-
+#!/bin/sh
+# ----------------------------------------------
+# 3-Usando estrutura de repetição, faça um script para exibir todos os arquivos
+# da pasta atual com tamanho maior que 500kb.
+# -----------------------------------------------
+#
+for arquivo in *.*
+do
+  tamanho=$(wc -c <"$arquivo")
+  tamanho_minimo=500000
+  if [ $tamanho -ge $tamanho_minimo ]; then
+    echo $arquivo
+  fi
+done
+# -----------------------------------------------
+
+4-
+#!/bin/bash
+# --------------------------------------------
+# 4-Usando estrutura de repetição, faça um script para calcular e exibir quantas
+# pastas e quantos arquivos tem na pasta atual.
+# --------------------------------------------
+#
+total_dir=0
+total_arquivos=0
+for item in *
+do
+  if [ -d $item ]
+  then
+    total_dir=$(($total_dir+1))
+  else
+    total_arquivos=$(($total_arquivos+1))
+  fi
+done
+echo "Arquivos: $total_arquivos Diretorios: $total_dir"
+# --------------------------------------------
+
+5-
+#!/bin/bash
+# --------------------------------------------
+# 5-Faça um script que leia um numero IP e retorna se endereço responde ou não ao
+# comando ping.
+# Além disso, se for digitado um ip vazio, o script deve informar ao usuario.
+# --------------------------------------------
+#
+echo -n "Qual ip? "
+read ip
+if [ -s $ip ]
+then
+  echo "IP vazio"
+  exit 1
+else
+  ping -c1 -q $ip
+  if [ $? -eq 0 ]
+  then
+    echo "$ip esta respondendo"
+    exit 0
+  else
+    echo "$ip nao responde"
+    exit 1
+  fi
+fi
+# --------------------------------------------
